@@ -14,10 +14,10 @@ jobs:
         - 2.5
         - 2.6
         - 2.7
-        env:
-        - PAGINATOR: pagy
-        - PAGINATOR: kaminari
-        - PAGINATOR: will_paginate
+        paginator:
+        - pagy
+        - kaminari
+        - will_paginate
 
     steps:
     - name: Checkout code
@@ -35,4 +35,4 @@ jobs:
 
     - name: rspec
       run: |
-        bundle exec rspec --format documentation
+        PAGINATOR=${{ matrix.paginator }} bundle exec rspec --format documentation
