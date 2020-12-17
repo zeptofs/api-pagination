@@ -13,6 +13,24 @@ describe NumbersController, :type => :controller do
     let(:total) { response.headers['Total'].to_i }
     let(:per_page) { response.headers['Per-Page'].to_i }
 
+    if ENV['PAGINATOR'].to_sym == :kaminari
+      context 'kaminari' do
+        around do |example|
+          old_per_page = Kaminari.config.max_per_page
+          Kaminari.config.max_per_page = 2
+          example.run
+          Kaminari.config.max_per_page = old_per_page
+        end
+
+        it 'respects max_per_page' do
+          get :index, params: {per_page: 3, count: 10}
+
+          expect(response.headers['Link']).to include('per_page=2')
+          expect(response.headers['Link']).not_to include('per_page=3')
+        end
+      end
+    end
+
     context 'without enough items to give more than one page' do
       before { get :index, params: {count: 10} }
 
@@ -262,7 +280,7 @@ describe NumbersController, :type => :controller do
           end
         end
 
-        after :all do 
+        after :all do
           class Fixnum
             class << self
               undef_method :default_per_page, :per_page
@@ -295,7 +313,7 @@ describe NumbersController, :type => :controller do
       end
     end
 
-    context 'default per page in objects without paginator defaults' do 
+    context 'default per page in objects without paginator defaults' do
       it 'should not fail if model does not respond to per page' do
         get :index_with_no_per_page, params: {count: 100}
 

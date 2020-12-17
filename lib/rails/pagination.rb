@@ -42,6 +42,9 @@ module Rails
 
       pages.each do |k, v|
         new_params = request.query_parameters.merge(:page => v)
+        if request.query_parameters.key?(:per_page)
+          new_params[:per_page] = options[:per_page]
+        end
         links << %(<#{url}?#{new_params.to_param}>; rel="#{k}")
       end
 
