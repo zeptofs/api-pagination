@@ -28,6 +28,11 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
 
+    - name: Bundle install
+      run: |
+        gem install bundler -v 2.2.1
+        bundle install --jobs 4 --retry 3
+
     - name: rspec
       run: |
         bundle exec rspec
