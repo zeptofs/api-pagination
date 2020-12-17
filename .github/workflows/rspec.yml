@@ -1,0 +1,33 @@
+name: Build
+
+on:
+- push
+- pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby:
+        - 2.5
+        - 2.6
+        - 2.7
+        env:
+        - PAGINATOR: pagy
+        - PAGINATOR: kaminari
+        - PAGINATOR: will_paginate
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+
+    - name: Set up Ruby ${{ matrix.ruby }}
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+
+    - name: rspec
+      run: |
+        bundle exec rspec
